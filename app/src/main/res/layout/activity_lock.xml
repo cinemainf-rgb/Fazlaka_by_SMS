@@ -1,9 +1,28 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android" android:layout_width="match_parent" android:layout_height="match_parent" android:orientation="vertical" android:gravity="center" android:padding="24dp">
-    <TextView android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="Fazlaka - فضلكا" android:textSize="28sp" />
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android" android:layout_width="match_parent" android:layout_height="match_parent" android:orientation="vertical" android:gravity="center" android:padding="24dp" android:background="#FFFFFF">
+    <TextView android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="Fazlaka - فضلكا" android:textSize="28sp" android:textColor="#333333" />
     <TextView android:id="@+id/dots" android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="○○○○" android:textSize="24sp" android:layout_marginTop="24dp" />
-    <TextView android:id="@+id/msg" android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="المس البصمة او اكتب PIN" android:layout_marginTop="8dp" />
+    <TextView android:id="@+id/msg" android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="اكتب PIN - الافتراضي 1234" android:layout_marginTop="8dp" />
     <Button android:id="@+id/btnFinger" android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="👆 بصمة" android:layout_marginTop="16dp" />
-    <GridLayout android:id="@+id/keys" android:layout_width="match_parent" android:layout_height="wrap_content" android:columnCount="3" android:layout_marginTop="16dp" />
+    <LinearLayout android:layout_width="match_parent" android:layout_height="wrap_content" android:orientation="horizontal" android:layout_marginTop="16dp">
+        <Button android:id="@+id/key1" android:layout_width="0dp" android:layout_height="wrap_content" android:layout_weight="1" android:text="1" />
+        <Button android:id="@+id/key2" android:layout_width="0dp" android:layout_height="wrap_content" android:layout_weight="1" android:text="2" />
+        <Button android:id="@+id/key3" android:layout_width="0dp" android:layout_height="wrap_content" android:layout_weight="1" android:text="3" />
+    </LinearLayout>
+    <LinearLayout android:layout_width="match_parent" android:layout_height="wrap_content" android:orientation="horizontal">
+        <Button android:id="@+id/key4" android:layout_width="0dp" android:layout_height="wrap_content" android:layout_weight="1" android:text="4" />
+        <Button android:id="@+id/key5" android:layout_width="0dp" android:layout_height="wrap_content" android:layout_weight="1" android:text="5" />
+        <Button android:id="@+id/key6" android:layout_width="0dp" android:layout_height="wrap_content" android:layout_weight="1" android:text="6" />
+    </LinearLayout>
+    <LinearLayout android:layout_width="match_parent" android:layout_height="wrap_content" android:orientation="horizontal">
+        <Button android:id="@+id/key7" android:layout_width="0dp" android:layout_height="wrap_content" android:layout_weight="1" android:text="7" />
+        <Button android:id="@+id/key8" android:layout_width="0dp" android:layout_height="wrap_content" android:layout_weight="1" android:text="8" />
+        <Button android:id="@+id/key9" android:layout_width="0dp" android:layout_height="wrap_content" android:layout_weight="1" android:text="9" />
+    </LinearLayout>
+    <LinearLayout android:layout_width="match_parent" android:layout_height="wrap_content" android:orientation="horizontal">
+        <Button android:id="@+id/keyClear" android:layout_width="0dp" android:layout_height="wrap_content" android:layout_weight="1" android:text="مسح" />
+        <Button android:id="@+id/key0" android:layout_width="0dp" android:layout_height="wrap_content" android:layout_weight="1" android:text="0" />
+        <Button android:id="@+id/keyBack" android:layout_width="0dp" android:layout_height="wrap_content" android:layout_weight="1" android:text="X" />
+    </LinearLayout>
     <TextView android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="الرمز الافتراضي: 1234" android:layout_marginTop="16dp" />
 </LinearLayout>
