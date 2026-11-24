@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    android:padding="24dp">
+    <TextView android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="المخزون" android:textSize="28sp" android:textStyle="bold" />
+    <EditText android:id="@+id/editName" android:layout_width="match_parent" android:layout_height="wrap_content" android:hint="اسم الصنف" android:layout_marginTop="16dp" />
+    <EditText android:id="@+id/editQty" android:layout_width="match_parent" android:layout_height="wrap_content" android:hint="الكمية" android:inputType="number" android:layout_marginTop="8dp" />
+    <EditText android:id="@+id/editPrice" android:layout_width="match_parent" android:layout_height="wrap_content" android:hint="السعر" android:inputType="numberDecimal" android:layout_marginTop="8dp" />
+    <Button android:id="@+id/btnAdd" android:layout_width="match_parent" android:layout_height="wrap_content" android:text="إضافة" android:layout_marginTop="12dp" />
+    <TextView android:id="@+id/txtList" android:layout_width="match_parent" android:layout_height="wrap_content" android:text="" android:layout_marginTop="16dp" />
+    <Button android:id="@+id/btnBack" android:layout_width="match_parent" android:layout_height="wrap_content" android:text="رجوع" android:layout_marginTop="16dp" />
+</LinearLayout>
