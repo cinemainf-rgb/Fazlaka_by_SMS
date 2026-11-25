@@ -35,12 +35,6 @@ main{padding:12px}
 nav{position:fixed;bottom:0;left:50%;transform:translateX(-50%);width:100%;max-width:430px;z-index:40;background:var(--surface);border-top:1px solid var(--border);display:grid;grid-template-columns:repeat(5,1fr);padding:4px}
 nav button{color:var(--muted);font-size:11px;padding:6px 0;display:flex;flex-direction:column;align-items:center;gap:2px}
 nav button.active{color:var(--primary);font-weight:600}
-.lock{max-width:430px;margin:auto;min-height:100dvh;background:var(--surface);padding:40px 24px 24px;text-align:center;display:flex;flex-direction:column}
-.dots{display:flex;justify-content:center;gap:12px;margin-top:32px}
-.dot{width:13px;height:13px;border-radius:999px;border:1px solid var(--border);background:var(--surface2)}
-.dot.on{background:var(--primary);border-color:var(--primary)}
-.keys{display:grid;grid-template-columns:repeat(3,1fr);gap:12px;max-width:290px;margin:16px auto;width:100%}
-.keys button{height:58px;border-radius:16px;background:var(--surface2);font-size:24px}
 .modal{position:fixed;inset:0;z-index:50;background:rgba(0,0,0,.4);overflow:auto;padding:16px 12px}
 .modal-box{max-width:400px;margin:auto;background:var(--surface);border-radius:24px;padding:16px}
 .hidden{display:none}
@@ -67,7 +61,7 @@ const load=(k,d)=>{try{const v=JSON.parse(localStorage.getItem(k));return v??d}c
 const save=(k,v)=>localStorage.setItem(k,JSON.stringify(v));
 const esc=s=>String(s??'').replace(/&/g,'&amp;').replace(/</g,'&lt;');
 let S={
-pin:load('fz_pin','1234'),locked:true,hide:load('fz_hide',false),dark:load('fz_dark',false),
+hide:load('fz_hide',false),dark:load('fz_dark',false),
 tab:'home',page:'',svcTab:'wallets',
 shop:load('fz_shop',{name:'FAZLAKA',owner:'صاحب المحل',phone:''}),
 wallets:load('fz_wallets',[
@@ -96,12 +90,11 @@ svc:{walletId:'w1',dir:'وارد',amount:'',comm:'',note:''},
 mach:{company:'فوري',op:'شحن',amount:'',comm:''},
 ship:{network:'فودافون',phone:'',amount:'',comm:''},
 bills:{type:'كهرباء',amount:'',comm:'',note:''},
-walletDetail:'',logFilter:'الكل',productDetail:'',stockCount:{},
 buyForm:{supplierId:1,productId:1,qty:'',cost:''},
 exp:{name:'',amount:'',cat:'إيجار'},
-pinInput:'',pinMsg:'',toast:'',autoBackup:load('fz_auto',true),
+toast:'',pinInput:'',pinMsg:'',
 };
-function persist(){['wallets','products','moves','sales','expenses','customers','suppliers','shop','pin','hide','dark','autoBackup'].forEach(k=>save('fz_'+k,S[k]));}
+function persist(){['wallets','products','moves','sales','expenses','customers','suppliers','shop','hide','dark'].forEach(k=>save('fz_'+k,S[k]));}
 function show(v){return S.hide?'****':money(v)}
 function wallet(id){return S.wallets.find(w=>w.id===id)}
 function addMove(title,detail,amount){S.moves.unshift({id:Date.now()+Math.random(),date:today(),time:nowTime(),title,detail,amount:amount||0});}
@@ -111,36 +104,21 @@ function todayMoves(){return S.moves.filter(m=>m.date===today())}
  function render(){
 document.body.classList.toggle('dark',S.dark);
 const app=$('#app');
-if(S.locked){app.innerHTML=lockHTML();return;}
 app.innerHTML=`
 <div class="app"><header>
-<button class="icon-btn" onclick="openMenu()">☰</button>
 <div class="logo">F</div>
 <div style="flex:1;min-width:0"><div style="font-weight:600;font-size:15px">${esc(S.shop.name)}</div><div class="small">${esc(S.shop.owner)} • <span class="latin">${today()}</span></div></div>
 <button class="icon-btn" onclick="toggleHide()">${S.hide?'🙈':'👁️'}</button>
 <button class="icon-btn" onclick="toggleDark()">${S.dark?'☀️':'🌙'}</button>
-<button class="icon-btn" onclick="lock()">🔒</button>
 </header><main>${S.page?pageHTML(S.page):tabHTML(S.tab)}</main>
 ${S.toast?`<div class="card" style="margin:0 12px;background:var(--success-soft);color:var(--success)">${esc(S.toast)}</div>`:''}
 <nav>${[['home','🏠','الرئيسية'],['services','💳','الخدمات'],['stock','📦','المخزون'],['reports','📊','التقارير'],['more','☰','المزيد']].map(t=>`<button class="${(S.tab===t[0]||(t[0]==='more'&&S.page))?'active':''}" onclick="${t[0]==='more'?'openMenu()':t[0]==='reports'?"goPage('reports')":`go('${t[0]}')`}">${t[1]}<span>${t[2]}</span></button>`).join('')}</nav></div>
 <div id="menu" class="modal hidden"><div class="modal-box">
 <div class="row"><b>☰ المزيد</b><button class="icon-btn" onclick="closeMenu()">✕</button></div>
 ${[['money','💰 فلوسي'],['customers','👥 العملاء'],['suppliers','🏭 الموردين'],['expenses','🧾 المصروفات'],['log','🕒 سجل الحركة'],['low','⚠️ النواقص'],['buy','🛒 شراء بضاعة'],['reports','📊 التقارير'],['settings','⚙️ الإعدادات'],['backup','💾 النسخ الاحتياطي']].map(m=>`<button class="btn" style="background:var(--surface2);margin-top:8px;text-align:right" onclick="goPage('${m[0]}')">${m[1]}</button>`).join('')}
-<button class="btn" style="background:var(--danger-soft);color:var(--danger);margin-top:8px" onclick="lock()">🔒 قفل</button>
 </div></div>
 <div id="productModal" class="modal hidden"></div>`;
 }
-// شاشة القفل - مفيش رمز مكتوب خالص هنا
-function lockHTML(){return `<div class="lock">
-<div style="display:flex;justify-content:space-between"><button class="icon-btn" onclick="toggleDark()">${S.dark?'☀️':'🌙'}</button><button class="icon-btn" onclick="toggleHide()">${S.hide?'🙈':'👁️'}</button></div>
-<div class="logo" style="width:84px;height:84px;border-radius:24px;font-size:44px;margin:auto">F</div>
-<h1 style="font-size:28px;margin:16px 0 0">FAZLAKA</h1><p class="small">محاسبة محل موبايل وخدمات دفع إلكتروني</p>
-<div class="dots">${[0,1,2,3].map(i=>`<span class="dot ${S.pinInput.length>i?'on':''}"></span>`).join('')}</div>
-<p style="min-height:20px;color:var(--danger);font-size:13px">${esc(S.pinMsg||'اكتب PIN')}</p>
-<button class="icon-btn" style="margin:auto;width:64px;height:64px;background:var(--primary-soft);color:var(--primary);font-size:28px" onclick="bio()">👆</button>
-<p class="small">أو افتح بالبصمة</p>
-<div class="keys">${['1','2','3','4','5','6','7','8','9','مسح','0','⌫'].map(k=>`<button onclick="press('${k}')">${k}</button>`).join('')}</div>
-<p class="small" style="margin-top:auto">تقدر تغير الرمز من الإعدادات</p></div>`;}
 function tabHTML(tab){
 if(tab==='home'){
 const salesToday=S.sales.filter(s=>s.date===today()).reduce((a,x)=>a+x.total,0);
@@ -246,7 +224,7 @@ if(page==='buy')return `<button onclick="go('home')">← رجوع</button><h2>�
 if(page==='expenses')return `<button onclick="go('home')">← رجوع</button><h2>🧾 المصروفات</h2><div class="card"><input class="field" value="${esc(S.exp.name)}" placeholder="اسم المصروف" oninput="S.exp.name=this.value"><input class="field latin" inputmode="numeric" value="${esc(S.exp.amount)}" placeholder="المبلغ" oninput="S.exp.amount=this.value.replace(/[^0-9]/g,'')"><button class="btn btn-primary" style="margin-top:8px" onclick="addExpense()">إضافة</button></div>${S.expenses.map(e=>`<div class="item"><div style="flex:1"><b>${esc(e.title)}</b><div class="small"><span class="latin">${e.date}</span></div></div><b>${show(e.amount)}</b></div>`).join('')}`;
 if(page==='settings')return `<button onclick="go('home')">← رجوع</button><h2>⚙️ الإعدادات</h2>
 <div class="card" style="margin-top:10px"><b>معلومات المحل</b><label style="font-size:13px">اسم المحل<input class="field" value="${esc(S.shop.name)}" oninput="S.shop.name=this.value;persist()"></label><label style="font-size:13px">صاحب المحل<input class="field" value="${esc(S.shop.owner)}" oninput="S.shop.owner=this.value;persist()"></label></div>
-<div class="card" style="margin-top:10px"><b>الأمان</b><label style="font-size:13px">PIN جديد<input class="field latin" id="newPin" placeholder="4 أرقام" inputmode="numeric"></label><button class="btn btn-primary" style="margin-top:8px" onclick="changePin()">حفظ PIN</button><div class="row" style="margin-top:12px"><span>الوضع الليلي</span><button class="chip ${S.dark?'active':''}" onclick="toggleDark()">${S.dark?'شغال':'مقفول'}</button></div><div class="row" style="margin-top:8px"><span>إخفاء الأرقام</span><button class="chip ${S.hide?'active':''}" onclick="toggleHide()">${S.hide?'مخفي':'ظاهر'}</button></div></div>`;
+<div class="card" style="margin-top:10px"><b>الأمان</b><p class="small">الـ PIN بيتغير من شاشة القفل الأصلية - لو عايز تغيره، اقفل التطبيق وافتحه، ودوس على تغيير PIN من الإعدادات هناك.</p><div class="row" style="margin-top:12px"><span>الوضع الليلي</span><button class="chip ${S.dark?'active':''}" onclick="toggleDark()">${S.dark?'شغال':'مقفول'}</button></div><div class="row" style="margin-top:8px"><span>إخفاء الأرقام</span><button class="chip ${S.hide?'active':''}" onclick="toggleHide()">${S.hide?'مخفي':'ظاهر'}</button></div></div>`;
 if(page==='backup')return `<button onclick="go('home')">← رجوع</button><h2>💾 النسخ الاحتياطي</h2><div class="card"><button class="btn" style="background:var(--surface2)" onclick="exportData()">📥 تصدير</button><label class="btn" style="background:var(--surface2);margin-top:8px;display:block;text-align:center">📤 استيراد<input type="file" accept=".json" style="display:none" onchange="importData(event)"></label></div>`;
 return '';
 }
@@ -256,36 +234,6 @@ function openMenu(){$('#menu').classList.remove('hidden')}
 function closeMenu(){const m=$('#menu');if(m)m.classList.add('hidden')}
 function toggleHide(){S.hide=!S.hide;persist();render()}
 function toggleDark(){S.dark=!S.dark;persist();render()}
-function lock(){S.locked=true;S.pinInput='';S.pinMsg='';render()}
-// البصمة الصح - بتفتح بالبصمة ومش بتجيب الرمز خالص
-function bio(){
-  // لو التطبيق الأندرويد موجود، خليه هو اللي يعمل البصمة
-  if(window.Android && window.Android.fingerprint){
-    window.Android.fingerprint();
-    return;
-  }
-  // لو مفيش Android، جرب بصمة المتصفح
-  if(window.PublicKeyCredential){
-    S.pinMsg='حط صباعك على البصمة';
-    render();
-    // محاولة بصمة المتصفح - لو فشلت افتح بالـ PIN
-    navigator.credentials.get({publicKey:{challenge:new Uint8Array(32),allowCredentials:[],timeout:15000,userVerification:'required'}}).then(()=>{
-      unlockByFingerprint();
-    }).catch(()=>{
-      S.pinMsg='البصمة مش متفعلة - اكتب PIN';
-      render();
-    });
-    return;
-  }
-  S.pinMsg='البصمة مش متاحة - اكتب PIN';
-  render();
-}
-// دي اللي الأندرويد بينادي عليها لما البصمة تنجح
-function unlockByFingerprint(){
-  S.locked=false;S.pinInput='';S.pinMsg='';S.toast='تم الفتح بالبصمة';
-  render();
-}
-function press(k){if(k==='مسح'){S.pinInput='';S.pinMsg='';}else if(k==='⌫'){S.pinInput=S.pinInput.slice(0,-1);S.pinMsg='';}else if(S.pinInput.length<4){S.pinInput+=k;if(S.pinInput.length===4){if(S.pinInput===S.pin){S.locked=false;S.pinInput='';S.pinMsg='';}else{S.pinMsg='الرمز غير صحيح';setTimeout(()=>{S.pinInput='';render()},350);}}}render();}
 function changeCart(id,d){const p=S.products.find(x=>x.id===id);if(!p)return;let q=(S.cart[id]||0)+d;if(q<0)q=0;if(q>p.qty)q=p.qty;if(q===0)delete S.cart[id];else S.cart[id]=q;render();}
 function checkout(){
 const items=Object.entries(S.cart).map(([id,qty])=>({p:S.products.find(x=>x.id==Number(id)),qty})).filter(x=>x.p);if(!items.length){S.toast='السلة فاضية';render();return;}
@@ -344,7 +292,6 @@ function saveProduct(id){const v=i=>document.getElementById(i).value;if(!v('f-na
 function addPerson(kind){const name=prompt(kind==='customers'?'اسم العميل':'اسم المورد');if(!name)return;const phone=prompt('رقم الموبايل')||'';const debt=Number(prompt('الدين')||0)||0;S[kind].push({id:Date.now(),name,phone,debt});persist();render();}
 function delPerson(kind,id){S[kind]=S[kind].filter(x=>x.id!==id);persist();render();}
 function pay(kind,id){const input=document.getElementById(kind==='customers'?`pay-c-${id}`:`pay-s-${id}`);const amt=Number(input?.value)||0;if(!amt)return;S[kind]=S[kind].map(x=>x.id===id?{...x,debt:Math.max(0,x.debt-amt)}:x);persist();render();}
-function changePin(){const v=document.getElementById('newPin')?.value||'';if(v.length!==4){alert('PIN لازم 4 أرقام');return;}S.pin=v;persist();alert('تم تغيير PIN');render();}
 function exportData(){const data={shop:S.shop,wallets:S.wallets,products:S.products,customers:S.customers,suppliers:S.suppliers,expenses:S.expenses,sales:S.sales,moves:S.moves};const blob=new Blob([JSON.stringify(data,null,2)],{type:'application/json'});const a=document.createElement('a');a.href=URL.createObjectURL(blob);a.download='fazlaka.json';a.click();}
 function importData(e){const f=e.target.files?.[0];if(!f)return;const r=new FileReader();r.onload=()=>{try{const d=JSON.parse(String(r.result));if(d.wallets)S.wallets=d.wallets;if(d.products)S.products=d.products;if(d.customers)S.customers=d.customers;if(d.suppliers)S.suppliers=d.suppliers;if(d.expenses)S.expenses=d.expenses;if(d.sales)S.sales=d.sales;if(d.moves)S.moves=d.moves;persist();S.toast='تم الاستيراد';render();}catch{alert('الملف مش صحيح')}};r.readAsText(f);}
 render();
