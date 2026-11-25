@@ -20,7 +20,6 @@ header{position:sticky;top:0;z-index:30;background:var(--surface);border-bottom:
 main{padding:12px}
 .card{background:var(--surface);border:1px solid var(--border);border-radius:16px;padding:12px;box-shadow:0 1px 2px rgba(11,79,74,.05)}
 .grid2{display:grid;grid-template-columns:1fr 1fr;gap:10px}
-.grid4{display:grid;grid-template-columns:repeat(4,1fr);gap:8px}
 .small{font-size:12px;color:var(--muted)}
 .big{font-size:20px;font-weight:600}
 .btn{width:100%;padding:12px;border-radius:12px;font-size:14px;font-weight:600}
@@ -46,7 +45,6 @@ nav button.active{color:var(--primary);font-weight:600}
 .modal-box{max-width:400px;margin:auto;background:var(--surface);border-radius:24px;padding:16px}
 .hidden{display:none}
 .badge{background:var(--danger-soft);color:var(--danger);font-size:11px;padding:4px 8px;border-radius:999px}
-.badge-ok{background:var(--success-soft);color:var(--success);font-size:11px;padding:4px 8px;border-radius:999px}
 .tabs{display:flex;gap:8px;overflow:auto;padding:8px 0}
 .timeline{position:relative;padding-right:18px}
 .timeline:before{content:'';position:absolute;right:6px;top:6px;bottom:6px;width:2px;background:var(--border)}
@@ -109,8 +107,6 @@ function wallet(id){return S.wallets.find(w=>w.id===id)}
 function addMove(title,detail,amount){S.moves.unshift({id:Date.now()+Math.random(),date:today(),time:nowTime(),title,detail,amount:amount||0});}
 function lowStock(){return S.products.filter(p=>p.qty<=p.threshold)}
 function lowWallets(){return S.wallets.filter(w=>w.type!=='cash'&&w.balance<2000)}
-function nearLimit(){return S.wallets.filter(w=>w.limit&&w.balance>w.limit*0.85&&w.balance<w.limit)}
-function exceedLimit(){return S.wallets.filter(w=>w.limit&&w.balance>=w.limit)}
 function todayMoves(){return S.moves.filter(m=>m.date===today())}
  function render(){
 document.body.classList.toggle('dark',S.dark);
@@ -134,15 +130,17 @@ ${[['money','💰 فلوسي'],['customers','👥 العملاء'],['suppliers',
 </div></div>
 <div id="productModal" class="modal hidden"></div>`;
 }
+// شاشة القفل - مفيش رمز مكتوب خالص هنا
 function lockHTML(){return `<div class="lock">
 <div style="display:flex;justify-content:space-between"><button class="icon-btn" onclick="toggleDark()">${S.dark?'☀️':'🌙'}</button><button class="icon-btn" onclick="toggleHide()">${S.hide?'🙈':'👁️'}</button></div>
 <div class="logo" style="width:84px;height:84px;border-radius:24px;font-size:44px;margin:auto">F</div>
 <h1 style="font-size:28px;margin:16px 0 0">FAZLAKA</h1><p class="small">محاسبة محل موبايل وخدمات دفع إلكتروني</p>
 <div class="dots">${[0,1,2,3].map(i=>`<span class="dot ${S.pinInput.length>i?'on':''}"></span>`).join('')}</div>
-<p style="min-height:20px;color:var(--danger);font-size:13px">${esc(S.pinMsg||'اكتب PIN - الافتراضي 1234')}</p>
-<button class="icon-btn" style="margin:auto;width:64px;height:64px;background:var(--primary-soft);color:var(--primary)" onclick="bio()">👆</button>
+<p style="min-height:20px;color:var(--danger);font-size:13px">${esc(S.pinMsg||'اكتب PIN')}</p>
+<button class="icon-btn" style="margin:auto;width:64px;height:64px;background:var(--primary-soft);color:var(--primary);font-size:28px" onclick="bio()">👆</button>
+<p class="small">أو افتح بالبصمة</p>
 <div class="keys">${['1','2','3','4','5','6','7','8','9','مسح','0','⌫'].map(k=>`<button onclick="press('${k}')">${k}</button>`).join('')}</div>
-<p class="small" style="margin-top:auto">الرمز الافتراضي: <span class="latin">1234</span> • تقدر تغيره من الإعدادات</p></div>`;}
+<p class="small" style="margin-top:auto">تقدر تغير الرمز من الإعدادات</p></div>`;}
 function tabHTML(tab){
 if(tab==='home'){
 const salesToday=S.sales.filter(s=>s.date===today()).reduce((a,x)=>a+x.total,0);
@@ -258,8 +256,35 @@ function openMenu(){$('#menu').classList.remove('hidden')}
 function closeMenu(){const m=$('#menu');if(m)m.classList.add('hidden')}
 function toggleHide(){S.hide=!S.hide;persist();render()}
 function toggleDark(){S.dark=!S.dark;persist();render()}
-function lock(){S.locked=true;S.pinInput='';render()}
-function bio(){S.pinMsg='البصمة - استخدم PIN';render()}
+function lock(){S.locked=true;S.pinInput='';S.pinMsg='';render()}
+// البصمة الصح - بتفتح بالبصمة ومش بتجيب الرمز خالص
+function bio(){
+  // لو التطبيق الأندرويد موجود، خليه هو اللي يعمل البصمة
+  if(window.Android && window.Android.fingerprint){
+    window.Android.fingerprint();
+    return;
+  }
+  // لو مفيش Android، جرب بصمة المتصفح
+  if(window.PublicKeyCredential){
+    S.pinMsg='حط صباعك على البصمة';
+    render();
+    // محاولة بصمة المتصفح - لو فشلت افتح بالـ PIN
+    navigator.credentials.get({publicKey:{challenge:new Uint8Array(32),allowCredentials:[],timeout:15000,userVerification:'required'}}).then(()=>{
+      unlockByFingerprint();
+    }).catch(()=>{
+      S.pinMsg='البصمة مش متفعلة - اكتب PIN';
+      render();
+    });
+    return;
+  }
+  S.pinMsg='البصمة مش متاحة - اكتب PIN';
+  render();
+}
+// دي اللي الأندرويد بينادي عليها لما البصمة تنجح
+function unlockByFingerprint(){
+  S.locked=false;S.pinInput='';S.pinMsg='';S.toast='تم الفتح بالبصمة';
+  render();
+}
 function press(k){if(k==='مسح'){S.pinInput='';S.pinMsg='';}else if(k==='⌫'){S.pinInput=S.pinInput.slice(0,-1);S.pinMsg='';}else if(S.pinInput.length<4){S.pinInput+=k;if(S.pinInput.length===4){if(S.pinInput===S.pin){S.locked=false;S.pinInput='';S.pinMsg='';}else{S.pinMsg='الرمز غير صحيح';setTimeout(()=>{S.pinInput='';render()},350);}}}render();}
 function changeCart(id,d){const p=S.products.find(x=>x.id===id);if(!p)return;let q=(S.cart[id]||0)+d;if(q<0)q=0;if(q>p.qty)q=p.qty;if(q===0)delete S.cart[id];else S.cart[id]=q;render();}
 function checkout(){
