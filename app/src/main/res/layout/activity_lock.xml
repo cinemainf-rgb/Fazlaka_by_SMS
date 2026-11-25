@@ -3,30 +3,74 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:orientation="vertical"
-    android:gravity="center"
-    android:padding="24dp">
-    <TextView android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="Fazlaka" android:textSize="32sp" android:textStyle="bold" />
-    <TextView android:id="@+id/dots" android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="○○○○" android:textSize="28sp" android:layout_marginTop="16dp" />
-    <TextView android:id="@+id/msg" android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="" android:layout_marginTop="8dp" />
-    <LinearLayout android:layout_width="wrap_content" android:layout_height="wrap_content" android:orientation="horizontal">
-        <Button android:id="@+id/key1" android:layout_width="70dp" android:layout_height="70dp" android:text="1" />
-        <Button android:id="@+id/key2" android:layout_width="70dp" android:layout_height="70dp" android:text="2" />
-        <Button android:id="@+id/key3" android:layout_width="70dp" android:layout_height="70dp" android:text="3" />
-    </LinearLayout>
-    <LinearLayout android:layout_width="wrap_content" android:layout_height="wrap_content" android:orientation="horizontal">
-        <Button android:id="@+id/key4" android:layout_width="70dp" android:layout_height="70dp" android:text="4" />
-        <Button android:id="@+id/key5" android:layout_width="70dp" android:layout_height="70dp" android:text="5" />
-        <Button android:id="@+id/key6" android:layout_width="70dp" android:layout_height="70dp" android:text="6" />
-    </LinearLayout>
-    <LinearLayout android:layout_width="wrap_content" android:layout_height="wrap_content" android:orientation="horizontal">
-        <Button android:id="@+id/key7" android:layout_width="70dp" android:layout_height="70dp" android:text="7" />
-        <Button android:id="@+id/key8" android:layout_width="70dp" android:layout_height="70dp" android:text="8" />
-        <Button android:id="@+id/key9" android:layout_width="70dp" android:layout_height="70dp" android:text="9" />
-    </LinearLayout>
-    <LinearLayout android:layout_width="wrap_content" android:layout_height="wrap_content" android:orientation="horizontal">
-        <Button android:id="@+id/keyClear" android:layout_width="70dp" android:layout_height="70dp" android:text="C" />
-        <Button android:id="@+id/key0" android:layout_width="70dp" android:layout_height="70dp" android:text="0" />
-        <Button android:id="@+id/keyBack" android:layout_width="70dp" android:layout_height="70dp" android:text="⌫" />
-    </LinearLayout>
-    <Button android:id="@+id/btnFinger" android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="البصمة" android:layout_marginTop="16dp" />
+    android:background="#FFFFFF"
+    android:padding="24dp"
+    android:gravity="center_horizontal">
+
+    <TextView
+        android:layout_width="84dp"
+        android:layout_height="84dp"
+        android:background="#0E5A54"
+        android:text="F"
+        android:textColor="#FFFFFF"
+        android:textSize="44sp"
+        android:textStyle="bold"
+        android:gravity="center" />
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="FAZLAKA"
+        android:textSize="28sp"
+        android:textStyle="bold"
+        android:textColor="#0F2A28"
+        android:layout_marginTop="16dp" />
+
+    <TextView
+        android:id="@+id/dotsText"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="○○○○"
+        android:textSize="28sp"
+        android:textColor="#0E5A54"
+        android:layout_marginTop="32dp" />
+
+    <TextView
+        android:id="@+id/msgText"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="اكتب PIN"
+        android:textSize="14sp"
+        android:textColor="#C23B31"
+        android:layout_marginTop="8dp" />
+
+    <Button
+        android:id="@+id/btnFingerprint"
+        android:layout_width="64dp"
+        android:layout_height="64dp"
+        android:text="👆"
+        android:textSize="28sp"
+        android:backgroundTint="#DDF3F0"
+        android:layout_marginTop="16dp" />
+
+    <GridLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:columnCount="3"
+        android:rowCount="4"
+        android:layout_marginTop="16dp">
+
+        <Button android:id="@+id/btn1" android:text="1" android:layout_width="0dp" android:layout_height="58dp" android:layout_columnWeight="1" android:layout_margin="6dp" />
+        <Button android:id="@+id/btn2" android:text="2" android:layout_width="0dp" android:layout_height="58dp" android:layout_columnWeight="1" android:layout_margin="6dp" />
+        <Button android:id="@+id/btn3" android:text="3" android:layout_width="0dp" android:layout_height="58dp" android:layout_columnWeight="1" android:layout_margin="6dp" />
+        <Button android:id="@+id/btn4" android:text="4" android:layout_width="0dp" android:layout_height="58dp" android:layout_columnWeight="1" android:layout_margin="6dp" />
+        <Button android:id="@+id/btn5" android:text="5" android:layout_width="0dp" android:layout_height="58dp" android:layout_columnWeight="1" android:layout_margin="6dp" />
+        <Button android:id="@+id/btn6" android:text="6" android:layout_width="0dp" android:layout_height="58dp" android:layout_columnWeight="1" android:layout_margin="6dp" />
+        <Button android:id="@+id/btn7" android:text="7" android:layout_width="0dp" android:layout_height="58dp" android:layout_columnWeight="1" android:layout_margin="6dp" />
+        <Button android:id="@+id/btn8" android:text="8" android:layout_width="0dp" android:layout_height="58dp" android:layout_columnWeight="1" android:layout_margin="6dp" />
+        <Button android:id="@+id/btn9" android:text="9" android:layout_width="0dp" android:layout_height="58dp" android:layout_columnWeight="1" android:layout_margin="6dp" />
+        <Button android:id="@+id/btnClear" android:text="مسح" android:layout_width="0dp" android:layout_height="58dp" android:layout_columnWeight="1" android:layout_margin="6dp" />
+        <Button android:id="@+id/btn0" android:text="0" android:layout_width="0dp" android:layout_height="58dp" android:layout_columnWeight="1" android:layout_margin="6dp" />
+        <Button android:id="@+id/btnDelete" android:text="⌫" android:layout_width="0dp" android:layout_height="58dp" android:layout_columnWeight="1" android:layout_margin="6dp" />
+    </GridLayout>
 </LinearLayout>
